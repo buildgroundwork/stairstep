@@ -52,7 +52,7 @@ module Stairstep::Common
 
     def push(remote, ref_name, force: )
       logger.info("Pushing to target environment #{remote}")
-      params = [remote, "#{ref_name}:master"]
+      params = [remote, "#{ref_name}:main"]
       params.unshift("--force") if force
       git("push", *params)
     end
