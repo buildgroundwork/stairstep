@@ -3,6 +3,7 @@
 require_relative "../stairstep/base"
 require_relative "../stairstep/command_executor"
 require_relative "../stairstep/common/bundler"
+require_relative "../stairstep/common/yarn"
 require "fileutils"
 
 class Stairstep::Deploy < Stairstep::Base
@@ -13,7 +14,8 @@ class Stairstep::Deploy < Stairstep::Base
     heroku.capture_db(to_remote) if capture_db?
 
     git.with_ref(to_remote, commit) do |ref_name|
-      bundler.install_local_gems
+      yarn.install_local_modules unless skip_yarn?
+      bundler.install_local_gems unless skip_bundle?
       prepare_commit(ref_name)
       push_commit(ref_name)
     end
@@ -27,12 +29,14 @@ class Stairstep::Deploy < Stairstep::Base
     super
     @commit = options["commit"]
     @force = options["force"]
+    @skip_bundle = options["skip-bundle"]
+    @skip_yarn = options["skip-yarn"]
     @precompile = options["assets-precompile"]
-    @bundle = options["bundle-package"]
+    @bundle_package = options["bundle-package"]
 
     if options["development"]
       @precompile = false
-      @bundle = false
+      @bundle_package = false
       @tag = false
     end
   end
@@ -48,7 +52,7 @@ class Stairstep::Deploy < Stairstep::Base
   def prepare_commit(ref_name)
     logger.info("Preparing commit")
     precompile if precompile?
-    bundle(ref_name) if bundle?
+    bundle(ref_name) if bundle_package?
   end
 
   def precompile
@@ -92,6 +96,10 @@ class Stairstep::Deploy < Stairstep::Base
 
   def bundler
     @bundler ||= Stairstep::Common::Bundler.new(executor, logger)
+  end
+
+  def yarn
+    @yarn ||= Stairstep::Common::Yarn.new(executor, logger)
   end
 end
 

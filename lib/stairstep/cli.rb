@@ -35,6 +35,8 @@ class Stairstep::CLI < Thor
   method_option "--force", alias: "-f", type: :boolean, desc: "Force a non-fast-forward deploy"
   method_option "--db-capture", type: :boolean, desc: "Capture a snapshot of the database before deploying"
   method_option "--downtime", type: :boolean, default: true, desc: "Bring down the site during deploy (NB: Only skip this for deploys with no migrations)"
+  method_option "--skip-bundle", type: :boolean, default: false, desc: "Skip bundling gems locally before deploy"
+  method_option "--skip-yarn", type: :boolean, default: false, desc: "Skip installing JS modules locally before deploy"
   method_option "--assets-precompile", type: :boolean, default: false, desc: "Create a commit for precompiled assets"
   method_option "--bundle-package", type: :boolean, default: false, desc: "Create a commit for packaged gems"
   method_option "--tag", type: :boolean, default: true, desc: "Create a tag for the commit"
