@@ -42,7 +42,7 @@ class Stairstep::Deploy < Stairstep::Base
   end
 
   def ensure_log_directory
-    Dir.mkdir("log") unless Dir.exist?("log")
+    FileUtils.mkdir_p
   end
 
   def prepare_commit(ref_name)
