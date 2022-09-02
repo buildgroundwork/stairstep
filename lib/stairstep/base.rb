@@ -11,6 +11,8 @@ class Stairstep::Base
   def initialize(thor, to_remote, options)
     @thor = thor
     @to_remote = to_remote
+
+    options = options.merge(configuration.fixed_options)
     process_options(options)
   end
 
@@ -19,8 +21,6 @@ class Stairstep::Base
   attr_reader :thor, :to_remote
 
   def process_options(options)
-    options = options.merge(configuration.fixed_options)
-
     @capture_db = options["db-capture"]
     @downtime = options["downtime"]
     @tag = options["tag"]
