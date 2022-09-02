@@ -25,6 +25,13 @@ class Configuration
     end
   end
 
+  def fixed_options
+    settings.fetch("command_line", []).inject({}) do |defaults, option|
+      md = option.match(/\A(?:--)?(no-)?(.+)/)
+      defaults.merge(md.captures[1] => !md.captures.first)
+    end
+  end
+
   private
 
   attr_reader :git, :settings

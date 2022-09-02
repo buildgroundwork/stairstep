@@ -60,5 +60,34 @@ RSpec.describe Configuration do
       it { should be_empty }
     end
   end
+
+  describe "#fixed_options" do
+    subject { configuration.fixed_options }
+
+    context "with a boolean true option" do
+      let(:settings) { { command_line: ["downtime"] } }
+      it { should == { "downtime" => true } }
+    end
+
+    context "with a boolean false option" do
+      let(:settings) { { command_line: ["no-downtime"] } }
+      it { should == { "downtime" => false } }
+    end
+
+    context "with an option that includes the initial dashes" do
+      let(:settings) { { command_line: ["--no-downtime"] } }
+      it { should == { "downtime" => false } }
+    end
+
+    context "with multiple options" do
+      let(:settings) { { command_line: %w[--no-downtime tag] } }
+      it { should == { "downtime" => false, "tag" => true } }
+    end
+
+    context "with no command line options" do
+      let(:settings) { {} }
+      it { should == {} }
+    end
+  end
 end
 
