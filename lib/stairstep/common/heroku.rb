@@ -87,9 +87,9 @@ module Stairstep::Common
     end
 
     def manage_deploy(to_remote, downtime: , initial_deploy: )
-      scale_dynos(to_remote, initial_deploy: initial_deploy) do
-        with_maintenance(to_remote, downtime: downtime) do
-          with_migrations(to_remote, downtime: downtime) do
+      scale_dynos(to_remote, initial_deploy:) do
+        with_maintenance(to_remote, downtime:) do
+          with_migrations(to_remote, downtime:) do
             run_callbacks(to_remote, "before_deploy")
             yield
           end

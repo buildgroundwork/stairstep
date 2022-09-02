@@ -42,10 +42,10 @@ module Stairstep::Common
       end
     end
 
-    def with_ref(remote, commit, &block)
+    def with_ref(remote, commit, &)
       ref_name = build_ref_name(remote)
       git("update-ref", ref_name, commit, message: "Creating deploy ref (#{ref_name})")
-      checkout_ref(ref_name, &block)
+      checkout_ref(ref_name, &)
     ensure
       git("update-ref", "-d", ref_name, message: "Cleaning up deploy ref")
     end
