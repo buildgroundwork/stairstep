@@ -14,7 +14,7 @@ class Configuration
   end
 
   def app_name(remote: )
-    settings[remote.to_s]&.fetch("app", nil) || default_app_name(remote)
+    settings["app"]&.fetch(remote.to_s, nil) || default_app_name(remote)
   end
 
   def callbacks(phase: )

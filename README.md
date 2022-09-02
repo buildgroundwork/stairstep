@@ -38,10 +38,9 @@ command_line:
   - no-downtime
   - --debug
 
-demo:
-  app: wib-wob-demo
-production:
-  app: wibble-wobble-prod
+app:
+  demo: wib-wob-demo
+  production: wibble-wobble-prod
 
 before_deploy:
   config:unset:

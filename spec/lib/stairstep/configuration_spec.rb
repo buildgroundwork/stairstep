@@ -25,15 +25,15 @@ RSpec.describe Configuration do
 
   describe "#app_name" do
     subject { configuration.app_name(remote:) }
-    let(:app) { "jeff" }
+    let(:app_name) { "jeff" }
 
     context "with a setting for the given remote" do
-      let(:settings) { { pipeline:, remote => { app: } } }
-      it { should == app }
+      let(:settings) { { pipeline:, app: { remote => app_name } } }
+      it { should == app_name }
     end
 
     context "with a setting for a different remote" do
-      let(:settings) { { pipeline:, other_remote => { app: } } }
+      let(:settings) { { pipeline:, app: { other_remote => app_name } } }
       let(:other_remote) { "different" }
       it { should == "#{pipeline}-#{remote}" }
     end
