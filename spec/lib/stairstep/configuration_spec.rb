@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/core_ext/hash/keys"
 require_relative "../../../lib/stairstep/configuration"
 
 RSpec.describe Configuration do
@@ -36,6 +35,13 @@ RSpec.describe Configuration do
       let(:settings) { { pipeline:, app: { other_remote => app_name } } }
       let(:other_remote) { "different" }
       it { should == "#{pipeline}-#{remote}" }
+    end
+
+    context "with camelcase keys" do
+      let(:remote) { "aCamelCaseRemote" }
+      let(:app_name) { "aCamelCaseAppName" }
+      let(:settings) { { app: { remote => app_name } } }
+      it { should == app_name }
     end
   end
 
@@ -87,6 +93,11 @@ RSpec.describe Configuration do
     context "with no command line options" do
       let(:settings) { {} }
       it { should == {} }
+    end
+
+    context "with camelcase keys" do
+      let(:settings) { { commandLine: %w[--no-downtime tag] } }
+      it { should == { "downtime" => false, "tag" => true } }
     end
   end
 end

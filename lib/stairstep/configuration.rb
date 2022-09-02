@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+require "active_support/core_ext/hash/keys"
+require "active_support/core_ext/string/inflections"
 require "json"
 require "yaml"
 
 class Configuration
   def initialize(git: , settings: nil)
     @git = git
-    @settings = settings || load_from_file
+    @settings = normalize(settings || load_from_file)
   end
 
   def pipeline
@@ -44,6 +46,10 @@ class Configuration
     else
       {}
     end
+  end
+
+  def normalize(settings)
+    settings.transform_keys(&:underscore)
   end
 
   def default_app_name(remote)
