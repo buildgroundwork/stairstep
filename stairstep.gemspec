@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.executables = %w[stairstep]
   spec.require_paths = %w[lib]
 
+  spec.add_dependency("activesupport", "~> 7.0")
   spec.add_dependency("thor", "~> 1.0")
 
   spec.add_development_dependency("rake", "~> 13.0")

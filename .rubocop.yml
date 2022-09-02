@@ -26,6 +26,9 @@ Style/MethodCallWithArgsParentheses:
     - Gemfile
     - Rakefile
 
+RSpec/ContextWording:
+  Enabled: false
+
 RSpec/NamedSubject:
   Enabled: false
 

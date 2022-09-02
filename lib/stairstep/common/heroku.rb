@@ -6,17 +6,14 @@ require_relative "../../stairstep"
 
 module Stairstep::Common
   class Heroku
-    def initialize(executor, logger)
+    def initialize(executor, configuration, logger)
       @executor = executor
+      @configuration = configuration
       @logger = logger
     end
 
-    def pipeline
-      config["pipeline"]
-    end
-
-    def verify_pipeline(pipeline)
-      executor.execute!("heroku", "pipelines:info", pipeline, output: nil)
+    def verify_pipeline
+      executor.execute!("heroku", "pipelines:info", configuration.pipeline, output: nil)
     end
 
     def verify_application(remote)
@@ -32,12 +29,8 @@ module Stairstep::Common
       raise
     end
 
-    def app_name(pipeline, remote)
-      config[remote]&.fetch("app", nil) || "#{pipeline}-#{remote}"
-    end
-
-    def slug_commit(pipeline, remote)
-      path = "/apps/#{app_name(pipeline, remote)}/slugs/#{slug_id(remote)}"
+    def slug_commit(remote)
+      path = "/apps/#{configuration.app_name(remote:)}/slugs/#{slug_id(remote)}"
       slug_json = heroku_api("GET", path)
       JSON.parse(slug_json).fetch("commit")
     end
@@ -76,8 +69,8 @@ module Stairstep::Common
       heroku(remote, "maintenance:off") if downtime
     end
 
-    def promote_slug(pipeline, from_remote, to_remote)
-      heroku(from_remote, "pipelines:promote", "--to", app_name(pipeline, to_remote))
+    def promote_slug(from_remote, to_remote)
+      heroku(from_remote, "pipelines:promote", "--to", configuration.app_name(remote: to_remote))
     end
 
     def with_migrations(remote, downtime: )
@@ -104,16 +97,7 @@ module Stairstep::Common
 
     private
 
-    attr_reader :executor, :logger
-
-    def config
-      @config ||=
-        if File.exist?("config/stairstep.yml")
-          YAML.load_file("config/stairstep.yml")
-        else
-          {}
-        end
-    end
+    attr_reader :executor, :configuration, :logger
 
     def heroku(remote, *command, capture_stdout: false, **options)
       if capture_stdout
@@ -128,10 +112,8 @@ module Stairstep::Common
     end
 
     def run_callbacks(remote, phase)
-      config[phase]&.each do |type, commands|
-        commands.each do |command|
-          heroku(remote, type, command)
-        end
+      configuration.callbacks(phase:).each do |(command, param)|
+        heroku(remote, command, param)
       end
     end
   end

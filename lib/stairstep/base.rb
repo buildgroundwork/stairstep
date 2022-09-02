@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../stairstep"
+require_relative "../stairstep/configuration"
 require_relative "../stairstep/command_executor"
 require_relative "../stairstep/logger"
 require_relative "../stairstep/common/git"
@@ -30,7 +31,7 @@ class Stairstep::Base
   end
 
   def heroku
-    @heroku ||= Stairstep::Common::Heroku.new(executor, logger)
+    @heroku ||= Stairstep::Common::Heroku.new(executor, configuration, logger)
   end
 
   def git
@@ -39,6 +40,10 @@ class Stairstep::Base
 
   def logger
     @logger ||= Stairstep::Logger.new
+  end
+
+  def configuration
+    @configuration ||= Configuration.new(git:)
   end
 
   def method_missing(method, *args, **kwargs)
