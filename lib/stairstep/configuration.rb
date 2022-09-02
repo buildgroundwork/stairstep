@@ -40,7 +40,7 @@ class Configuration
 
   def load_from_file
     if File.exist?(".stairstep.json")
-      JSON.parse(File.open(".stairstep.json", "r"))
+      File.open(".stairstep.json", "r") { |f| JSON.parse(f.read) }
     elsif File.exist?("config/stairstep.yml")
       YAML.safe_load(File.open("config/stairstep.yml", "r"))
     else
